@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-inscripción · Sonantes</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root {
+  --bg:#0f0e0c; --surface:#181714; --surface2:#211f1b; --border:#2e2b26;
+  --accent:#c9a84c; --accent2:#e8c97e; --text:#e8e4dc; --text2:#9c9487; --text3:#5c5850;
+  --green:#6baa7a; --red:#c0604a; --blue:#5a8fc2; --purple:#9b7ec8;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh}
+
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 10%, rgba(201,168,76,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 10% 80%, rgba(90,143,194,.05) 0%, transparent 60%);
+}
+
+/* HEADER */
+.header{
+  position:relative;z-index:1;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:18px 24px;display:flex;align-items:center;justify-content:space-between;
+}
+.logo-wrap{display:flex;flex-direction:column}
+.logo-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--accent2);line-height:1}
+.logo-sub{font-size:10px;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-top:3px}
+.header-link{font-size:12px;color:var(--text3);text-decoration:none;transition:color .15s}
+.header-link:hover{color:var(--accent)}
+
+/* BANNER */
+.banner{
+  position:relative;z-index:1;
+  background:linear-gradient(135deg,rgba(201,168,76,.15) 0%,rgba(201,168,76,.05) 100%);
+  border-bottom:1px solid rgba(201,168,76,.2);
+  padding:14px 24px;text-align:center;
+}
+.banner-text{font-size:13px;color:var(--accent2);font-weight:500}
+.banner-fechas{font-size:11px;color:var(--text2);margin-top:3px}
+.banner-cerrado{background:linear-gradient(135deg,rgba(192,96,74,.12) 0%,rgba(192,96,74,.04) 100%);border-bottom:1px solid rgba(192,96,74,.2)}
+.banner-cerrado .banner-text{color:var(--red)}
+
+/* HERO */
+.hero{
+  position:relative;z-index:1;
+  max-width:660px;margin:52px auto 0;padding:0 24px;text-align:center;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);
+  margin-bottom:18px;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:1;height:1px;background:var(--border);width:30px}
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,5vw,44px);
+  font-weight:600;line-height:1.15;
+  color:var(--text);margin-bottom:16px;
+}
+.hero h1 em{color:var(--accent2);font-style:italic}
+.hero p{font-size:15px;color:var(--text2);line-height:1.7;max-width:500px;margin:0 auto 36px}
+
+.instrs{display:flex;justify-content:center;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+.instr-chip{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:6px 14px;font-size:12px;color:var(--text2);
+  display:flex;align-items:center;gap:6px;
+}
+.instr-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.6}
+
+/* INFO DEL CICLO (cuota, edad mínima, etc.) */
+.ciclo-info{
+  position:relative;z-index:1;
+  max-width:600px;margin:0 auto 24px;padding:0 24px;
+}
+.ciclo-info-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:14px 18px;
+  display:flex;flex-wrap:wrap;gap:12px 24px;
+}
+.ciclo-info-item{
+  display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);
+}
+.ciclo-info-item .ci-label{color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.1em}
+.ciclo-info-item .ci-val{color:var(--text);font-weight:500}
+
+/* ADVERTENCIA CUPOS */
+.aviso-cupos{
+  position:relative;z-index:1;
+  max-width:600px;margin:0 auto 20px;padding:0 24px;
+}
+.aviso-cupos-inner{
+  background:rgba(201,168,76,.08);
+  border:1px solid rgba(201,168,76,.25);
+  border-radius:8px;padding:12px 16px;
+  font-size:12px;color:var(--text2);line-height:1.6;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.aviso-cupos-inner .aviso-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+
+/* FORMULARIO */
+.form-wrap{position:relative;z-index:1;max-width:600px;margin:0 auto 80px;padding:0 24px}
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.form-section{padding:28px 32px;border-bottom:1px solid var(--border)}
+.form-section:last-child{border-bottom:none}
+.section-label{
+  display:flex;align-items:center;gap:10px;
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:20px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-num{
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(201,168,76,.15);color:var(--accent);
+  font-size:10px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-family:'DM Mono',monospace;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{margin-bottom:16px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:11px;color:var(--text2);margin-bottom:6px;letter-spacing:.04em}
+.req{color:var(--accent);margin-left:2px}
+.form-input{
+  width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  padding:11px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;
+  outline:none;transition:border-color .15s, box-shadow .15s;-webkit-appearance:none;
+}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,168,76,.08)}
+.form-input::placeholder{color:var(--text3)}
+textarea.form-input{resize:vertical;min-height:80px;line-height:1.5}
+select.form-input{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235c5850'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer;
+}
+.form-input.error{border-color:var(--red)}
+.field-err{font-size:11px;color:var(--red);margin-top:4px;display:none}
+.field-err.show{display:block}
+
+/* SELECTOR INSTRUMENTO */
+.instr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.instr-opt{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;
+}
+.instr-opt:hover{border-color:var(--text3)}
+.instr-opt.selected{background:rgba(201,168,76,.1);border-color:var(--accent);color:var(--accent2)}
+.instr-opt .instr-icon{font-size:20px;margin-bottom:5px}
+.instr-opt .instr-name{font-size:11px;color:inherit}
+.instr-err{font-size:11px;color:var(--red);margin-top:6px;display:none}
+.instr-err.show{display:block}
+
+/* LABEL DINÁMICA SECCIÓN TUTOR */
+.tutor-section-label-text{transition:all .2s}
+
+/* AVISO EDAD MÍNIMA */
+.aviso-edad{
+  background:rgba(192,96,74,.08);border:1px solid rgba(192,96,74,.25);
+  border-radius:7px;padding:10px 13px;font-size:12px;color:var(--text2);
+  line-height:1.5;margin-top:10px;display:none;
+}
+.aviso-edad.show{display:block}
+
+/* FOOTER FORM */
+.form-footer{
+  background:var(--surface2);padding:20px 32px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.privacy-note{font-size:11px;color:var(--text3);line-height:1.5;max-width:300px}
+.btn-submit{
+  background:var(--accent);color:var(--bg);border:none;border-radius:9px;
+  padding:13px 28px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+  cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:8px;
+}
+.btn-submit:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,168,76,.25)}
+.btn-submit:active{transform:translateY(0)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-submit .spinner{
+  width:14px;height:14px;border:2px solid rgba(15,14,12,.3);border-top-color:var(--bg);
+  border-radius:50%;animation:spin .7s linear infinite;display:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-submit.loading .spinner{display:block}
+.btn-submit.loading .btn-text{display:none}
+
+/* ÉXITO */
+.success-wrap{
+  position:relative;z-index:1;max-width:520px;margin:80px auto;
+  padding:0 24px;text-align:center;display:none;
+}
+.success-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:rgba(107,170,122,.15);border:1px solid rgba(107,170,122,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin:0 auto 24px;
+}
+.success-title{font-family:'Playfair Display',serif;font-size:28px;margin-bottom:12px}
+.success-sub{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:32px}
+.success-detail{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:16px 20px;font-size:13px;color:var(--text2);line-height:1.7;
+  margin-bottom:24px;text-align:left;
+}
+.success-back{
+  font-size:13px;color:var(--text3);text-decoration:none;
+  display:inline-flex;align-items:center;gap:5px;transition:color .15s;
+}
+.success-back:hover{color:var(--accent)}
+
+/* CERRADO */
+.closed-wrap{
+  position:relative;z-index:1;max-width:480px;margin:80px auto;
+  padding:0 24px;text-align:center;display:none;
+}
+.closed-icon{font-size:36px;margin-bottom:20px}
+.closed-title{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:12px;color:var(--text2)}
+.closed-sub{font-size:14px;color:var(--text3);line-height:1.7}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:20px;right:20px;background:var(--accent);color:var(--bg);
+  padding:10px 18px;border-radius:8px;font-size:12px;font-weight:500;
+  z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.4);display:none;
+}
+
+/* FOOTER */
+.page-footer{
+  position:relative;z-index:1;text-align:center;padding:24px;
+  font-size:11px;color:var(--text3);border-top:1px solid var(--border);
+}
+.page-footer a{color:var(--text3);text-decoration:none;transition:color .15s}
+.page-footer a:hover{color:var(--accent)}
+
+@media(max-width:600px){
+  .form-section{padding:22px 20px}
+  .form-footer{padding:16px 20px}
+  .form-row{grid-template-columns:1fr}
+  .instr-grid{grid-template-columns:repeat(2,1fr)}
+  .hero{margin-top:36px}
+  .hero h1{font-size:28px}
+  .header{flex-direction:column;gap:10px;align-items:flex-start}
+  .ciclo-info-card{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo-wrap">
+    <div class="logo-title">♩ Sonantes</div>
+    <div class="logo-sub">Carmelo · Uruguay · 15 años</div>
+  </div>
+  <a href="https://sonantes.netlify.app" class="header-link">← Ingresar a la plataforma</a>
+</header>
+
+<!-- BANNER ESTADO INSCRIPCIONES -->
+<div class="banner" id="banner">
+  <div class="banner-text" id="banner-text">Cargando información del ciclo…</div>
+  <div class="banner-fechas" id="banner-fechas"></div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero-section">
+  <div class="hero-eyebrow">Grupos Sonantes · Carmelo</div>
+  <h1>Inscribite al<br><em>próximo ciclo</em></h1>
+  <p>Completá el formulario y nos ponemos en contacto para coordinar tu inicio en el grupo de cuerdas.</p>
+  <div class="instrs">
+    <div class="instr-chip"><span class="dot"></span>Violín</div>
+    <div class="instr-chip"><span class="dot"></span>Viola</div>
+    <div class="instr-chip"><span class="dot"></span>Cello</div>
+    <div class="instr-chip"><span class="dot"></span>Contrabajo</div>
+  </div>
+</section>
+
+<!-- INFO DEL CICLO (cuota, edad mínima, otras specs) -->
+<div class="ciclo-info" id="ciclo-info" style="display:none">
+  <div class="ciclo-info-card" id="ciclo-info-card"></div>
+</div>
+
+<!-- ADVERTENCIA CUPOS -->
+<div class="aviso-cupos" id="aviso-cupos">
+  <div class="aviso-cupos-inner">
+    <span class="aviso-icon">⚠️</span>
+    <span>Los cupos son <strong>limitados</strong>. Completar esta pre-inscripción no garantiza un lugar en el grupo — nos pondremos en contacto para confirmar la disponibilidad y coordinar el inicio.</span>
+  </div>
+</div>
+
+<!-- FORMULARIO -->
+<div class="form-wrap" id="form-wrap">
+  <div class="form-card">
+
+    <!-- SECCIÓN 1: ALUMNO -->
+    <div class="form-section">
+      <div class="section-label">
+        <div class="section-num">1</div>
+        Datos del alumno
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre <span class="req">*</span></label>
+          <input class="form-input" id="f-nombre" type="text" placeholder="Nombre">
+          <div class="field-err" id="err-nombre">Ingresá el nombre</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Apellido <span class="req">*</span></label>
+          <input class="form-input" id="f-apellido" type="text" placeholder="Apellido">
+          <div class="field-err" id="err-apellido">Ingresá el apellido</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fecha de nacimiento <span class="req">*</span></label>
+          <input class="form-input" id="f-nacimiento" type="date" onchange="checkEdad()">
+          <div class="field-err" id="err-nacimiento">Ingresá la fecha de nacimiento</div>
+          <div class="aviso-edad" id="aviso-edad-minima"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Localidad <span class="req">*</span></label>
+          <input class="form-input" id="f-localidad" type="text" placeholder="Ej: Carmelo, Nueva Palmira…">
+          <div class="field-err" id="err-localidad">Ingresá tu localidad</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Instrumento de interés <span class="req">*</span></label>
+        <div class="instr-grid" style="grid-template-columns:repeat(4,1fr)">
+          <div class="instr-opt" onclick="selectInstr('Violín',this)">
+            <div class="instr-icon">🎻</div>
+            <div class="instr-name">Violín</div>
+          </div>
+          <div class="instr-opt" onclick="selectInstr('Viola',this)">
+            <div class="instr-icon">🎻</div>
+            <div class="instr-name">Viola</div>
+          </div>
+          <div class="instr-opt" onclick="selectInstr('Cello',this)">
+            <div class="instr-icon">🎻</div>
+            <div class="instr-name">Cello</div>
+          </div>
+          <div class="instr-opt" onclick="selectInstr('Contrabajo',this)">
+            <div class="instr-icon">🎻</div>
+            <div class="instr-name">Contrabajo</div>
+          </div>
+          <div class="instr-opt" onclick="selectInstr('Sin definir',this)" style="grid-column:1/-1;flex-direction:row;display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px">
+            <div class="instr-icon" style="margin-bottom:0;font-size:16px">🎵</div>
+            <div class="instr-name" style="font-size:12px">Aún no lo sé</div>
+          </div>
+        </div>
+        <div class="instr-err" id="err-instrumento">Seleccioná un instrumento</div>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Experiencia musical previa <span style="color:var(--text3);font-size:10px">(opcional)</span></label>
+        <textarea class="form-input" id="f-experiencia" placeholder="Ej: Nunca estudié música / Estudié guitarra 2 años / Toco violín desde hace 6 meses…"></textarea>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: TUTOR / ADULTO -->
+    <div class="form-section" id="seccion-tutor">
+      <div class="section-label">
+        <div class="section-num">2</div>
+        <span id="tutor-section-title">Datos del tutor / familiar</span>
+      </div>
+      <div id="tutor-aviso-mayor" style="display:none;margin-bottom:16px">
+        <div style="background:rgba(107,170,122,.08);border:1px solid rgba(107,170,122,.25);border-radius:7px;padding:10px 13px;font-size:12px;color:var(--text2);line-height:1.5">
+          ✓ Como el alumno es mayor de edad, estos son sus propios datos de contacto.
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" id="label-tutor">Nombre del tutor <span class="req">*</span></label>
+          <input class="form-input" id="f-tutor" type="text" placeholder="Nombre completo">
+          <div class="field-err" id="err-tutor">Ingresá el nombre</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono de contacto <span class="req">*</span></label>
+          <input class="form-input" id="f-telefono" type="tel" placeholder="099 000 000">
+          <div class="field-err" id="err-telefono">Ingresá un teléfono de contacto</div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" id="label-email">Email <span class="req">*</span></label>
+        <input class="form-input" id="f-email" type="email" placeholder="correo@ejemplo.com">
+        <div class="field-err" id="err-email">Ingresá un email válido</div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="form-footer">
+      <p class="privacy-note">Tus datos se usan únicamente para coordinar la inscripción. No los compartimos con terceros.</p>
+      <button class="btn-submit" id="btn-submit" onclick="submitForm()">
+        <span class="btn-text">Enviar pre-inscripción</span>
+        <div class="spinner"></div>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ÉXITO -->
+<div class="success-wrap" id="success-wrap">
+  <div class="success-icon">✓</div>
+  <h2 class="success-title">¡Pre-inscripción enviada!</h2>
+  <p class="success-sub">Recibimos tu solicitud. Nos pondremos en contacto al email que nos dejaste para confirmar la disponibilidad e indicarte los próximos pasos.</p>
+  <div class="success-detail" id="success-detail"></div>
+  <a href="preinscripcion.html" class="success-back">← Enviar otra pre-inscripción</a>
+</div>
+
+<!-- CERRADO -->
+<div class="closed-wrap" id="closed-wrap">
+  <div class="closed-icon">🔒</div>
+  <h2 class="closed-title">Las inscripciones están cerradas</h2>
+  <p class="closed-sub" id="closed-msg">Por el momento no hay inscripciones abiertas. Volvé a consultar más adelante o comunicate directamente con Grupos Sonantes.</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer class="page-footer">
+  ♩ Grupos Sonantes · Carmelo, Uruguay · 15 años de educación musical
+  &nbsp;·&nbsp; <a href="https://sonantes.netlify.app">Plataforma docente</a>
+</footer>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient(
+  'https://oiayclvggsqbeiukczfv.supabase.co',
+  'sb_publishable_B9pz9jCRspMe8yxyF9sjug_uaO7c_6D'
+);
+
+var instrSeleccionado = null;
+var cicloConfig       = null;
+var esMayorDeEdad     = false;
+
+(async function init() {
+  await loadCicloConfig();
+})();
+
+// ── CARGAR CONFIG DEL CICLO ───────────────────────────────────
+async function loadCicloConfig() {
+  try {
+    var res = await sb
+      .from('config_preinscripcion')
+      .select('*')
+      .order('id', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    cicloConfig = res.data || null;
+  } catch (e) {
+    cicloConfig = null;
+  }
+  renderBanner(cicloConfig);
+  renderCicloInfo(cicloConfig);
+}
+
+// ── BANNER ────────────────────────────────────────────────────
+function renderBanner(config) {
+  var bannerEl = document.getElementById('banner');
+  var textEl   = document.getElementById('banner-text');
+  var fechasEl = document.getElementById('banner-fechas');
+
+  if (!config) {
+    textEl.textContent   = 'Inscripciones abiertas';
+    fechasEl.textContent = 'Completá el formulario y te contactamos a la brevedad';
+    return;
+  }
+
+  var hoy     = new Date().toISOString().split('T')[0];
+  var abierto = config.activo &&
+    (!config.fecha_inicio || config.fecha_inicio <= hoy) &&
+    (!config.fecha_cierre  || config.fecha_cierre  >= hoy);
+
+  if (!abierto) {
+    document.getElementById('hero-section').style.display  = 'none';
+    document.getElementById('ciclo-info').style.display    = 'none';
+    document.getElementById('aviso-cupos').style.display   = 'none';
+    document.getElementById('form-wrap').style.display     = 'none';
+    document.getElementById('closed-wrap').style.display   = 'block';
+    bannerEl.classList.add('banner-cerrado');
+    textEl.textContent = 'Inscripciones cerradas';
+    if (config.fecha_cierre && config.fecha_cierre < hoy) {
+      fechasEl.textContent = 'El período de inscripción finalizó el ' + formatFecha(config.fecha_cierre);
+    } else if (config.fecha_inicio && config.fecha_inicio > hoy) {
+      fechasEl.textContent = 'Las inscripciones abrirán el ' + formatFecha(config.fecha_inicio);
+    }
+    if (config.mensaje_cerrado) {
+      document.getElementById('closed-msg').textContent = config.mensaje_cerrado;
+    }
+    return;
+  }
+
+  textEl.textContent = config.nombre_ciclo
+    ? 'Inscripciones abiertas — ' + config.nombre_ciclo
+    : 'Inscripciones abiertas';
+
+  if (config.fecha_cierre) {
+    fechasEl.textContent = 'Inscripciones abiertas hasta el ' + formatFecha(config.fecha_cierre);
+  } else if (config.mensaje_abierto) {
+    fechasEl.textContent = config.mensaje_abierto;
+  } else {
+    fechasEl.textContent = 'Completá el formulario y te contactamos a la brevedad';
+  }
+}
+
+// ── INFO DEL CICLO (cuota, edad mínima, specs) ────────────────
+function renderCicloInfo(config) {
+  if (!config) return;
+  var items = [];
+  if (config.nombre_ciclo)  items.push({ label: 'Ciclo',        val: config.nombre_ciclo });
+  if (config.cuota)         items.push({ label: 'Cuota mensual', val: config.cuota });
+  if (config.edad_minima)   items.push({ label: 'Edad mínima',   val: config.edad_minima + ' años' });
+  if (config.specs)         items.push({ label: 'Info',          val: config.specs });
+
+  if (!items.length) return;
+
+  var html = items.map(function(it) {
+    return '<div class="ciclo-info-item">' +
+      '<span class="ci-label">' + it.label + '</span>' +
+      '<span class="ci-val">' + it.val + '</span>' +
+      '</div>';
+  }).join('');
+
+  document.getElementById('ciclo-info-card').innerHTML = html;
+  document.getElementById('ciclo-info').style.display = 'block';
+}
+
+// ── DETECCIÓN MAYOR DE EDAD ───────────────────────────────────
+function checkEdad() {
+  var val = document.getElementById('f-nacimiento').value;
+  if (!val) return;
+
+  var hoy        = new Date();
+  var nacimiento = new Date(val);
+  var edad       = hoy.getFullYear() - nacimiento.getFullYear();
+  var m          = hoy.getMonth() - nacimiento.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) { edad--; }
+
+  // Verificar edad mínima si está configurada
+  var edadMinima = cicloConfig && cicloConfig.edad_minima ? parseInt(cicloConfig.edad_minima) : null;
+  var avisoEdad  = document.getElementById('aviso-edad-minima');
+  if (edadMinima && edad < edadMinima) {
+    avisoEdad.textContent = '⚠ La edad mínima para inscribirse es ' + edadMinima + ' años. Por favor comunicate con nosotros para más información.';
+    avisoEdad.classList.add('show');
+  } else {
+    avisoEdad.classList.remove('show');
+  }
+
+  // Mayor de edad → cambiar labels de la sección tutor
+  esMayorDeEdad = edad >= 18;
+  var tituloEl  = document.getElementById('tutor-section-title');
+  var labelTutor= document.getElementById('label-tutor');
+  var labelEmail= document.getElementById('label-email');
+  var avisoMayor= document.getElementById('tutor-aviso-mayor');
+
+  if (esMayorDeEdad) {
+    tituloEl.textContent   = 'Tus datos de contacto';
+    labelTutor.innerHTML   = 'Tu nombre completo <span class="req">*</span>';
+    labelEmail.innerHTML   = 'Tu email <span class="req">*</span>';
+    avisoMayor.style.display = 'block';
+    document.getElementById('f-tutor').placeholder   = 'Tu nombre completo';
+    document.getElementById('f-telefono').placeholder = 'Tu teléfono';
+    document.getElementById('f-email').placeholder    = 'Tu email';
+  } else {
+    tituloEl.textContent   = 'Datos del tutor / familiar';
+    labelTutor.innerHTML   = 'Nombre del tutor <span class="req">*</span>';
+    labelEmail.innerHTML   = 'Email <span class="req">*</span>';
+    avisoMayor.style.display = 'none';
+    document.getElementById('f-tutor').placeholder    = 'Nombre completo';
+    document.getElementById('f-telefono').placeholder = '099 000 000';
+    document.getElementById('f-email').placeholder    = 'correo@ejemplo.com';
+  }
+}
+
+// ── INSTRUMENTO ───────────────────────────────────────────────
+function selectInstr(nombre, el) {
+  document.querySelectorAll('.instr-opt').forEach(function(o) { o.classList.remove('selected'); });
+  el.classList.add('selected');
+  instrSeleccionado = nombre;
+  document.getElementById('err-instrumento').classList.remove('show');
+}
+
+// ── VALIDACIÓN ────────────────────────────────────────────────
+function validar() {
+  var ok = true;
+  var campos = [
+    ['f-nombre',     'err-nombre',     function(v){ return v.trim().length >= 2; }],
+    ['f-apellido',   'err-apellido',   function(v){ return v.trim().length >= 2; }],
+    ['f-nacimiento', 'err-nacimiento', function(v){ return !!v; }],
+    ['f-localidad',  'err-localidad',  function(v){ return v.trim().length >= 2; }],
+    ['f-tutor',      'err-tutor',      function(v){ return v.trim().length >= 2; }],
+    ['f-telefono',   'err-telefono',   function(v){ return v.trim().length >= 6; }],
+    ['f-email',      'err-email',      function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }]
+  ];
+  campos.forEach(function(campo) {
+    var inputEl = document.getElementById(campo[0]);
+    var errEl   = document.getElementById(campo[1]);
+    if (!campo[2](inputEl.value)) {
+      errEl.classList.add('show');
+      inputEl.classList.add('error');
+      ok = false;
+    } else {
+      errEl.classList.remove('show');
+      inputEl.classList.remove('error');
+    }
+  });
+  if (!instrSeleccionado) {
+    document.getElementById('err-instrumento').classList.add('show');
+    ok = false;
+  }
+  return ok;
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────
+async function submitForm() {
+  if (!validar()) return;
+
+  var btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  var payload = {
+    nombre:           document.getElementById('f-nombre').value.trim(),
+    apellido:         document.getElementById('f-apellido').value.trim(),
+    fecha_nacimiento: document.getElementById('f-nacimiento').value,
+    localidad:        document.getElementById('f-localidad').value.trim(),
+    instrumento:      instrSeleccionado,
+    experiencia:      document.getElementById('f-experiencia').value.trim() || null,
+    contacto:         document.getElementById('f-tutor').value.trim(),
+    email_contacto:   document.getElementById('f-email').value.trim(),
+    telefono:         document.getElementById('f-telefono').value.trim(),
+    es_mayor:         esMayorDeEdad,
+    estado:           'pendiente'
+  };
+
+  var result = await sb.from('preinscripciones').insert(payload);
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+
+  if (result.error) {
+    showToast('Hubo un error al enviar. Intentá de nuevo.');
+    console.error(result.error);
+    return;
+  }
+
+  document.getElementById('hero-section').style.display  = 'none';
+  document.getElementById('ciclo-info').style.display    = 'none';
+  document.getElementById('aviso-cupos').style.display   = 'none';
+  document.getElementById('form-wrap').style.display     = 'none';
+  document.getElementById('success-wrap').style.display  = 'block';
+
+  var contactoLabel = esMayorDeEdad ? 'Alumno' : 'Tutor';
+  document.getElementById('success-detail').innerHTML =
+    '<strong>' + payload.nombre + ' ' + payload.apellido + '</strong><br>' +
+    'Instrumento: ' + payload.instrumento + '<br>' +
+    'Localidad: ' + payload.localidad + '<br>' +
+    contactoLabel + ': ' + payload.contacto + '<br>' +
+    'Email: ' + payload.email_contacto + '<br>' +
+    'Teléfono: ' + payload.telefono;
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+function formatFecha(iso) {
+  if (!iso) return '';
+  var parts = iso.split('-');
+  var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return parseInt(parts[2]) + ' de ' + meses[parseInt(parts[1]) - 1] + ' de ' + parts[0];
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent    = msg;
+  t.style.display  = 'block';
+  setTimeout(function(){ t.style.display = 'none'; }, 3500);
+}
+
+// Limpiar errores al tipear
+document.querySelectorAll('.form-input').forEach(function(el) {
+  el.addEventListener('input', function() {
+    el.classList.remove('error');
+    var errId = 'err-' + el.id.replace('f-', '');
+    var errEl = document.getElementById(errId);
+    if (errEl) errEl.classList.remove('show');
+  });
+});
+</script>
+</body>
+</html>
