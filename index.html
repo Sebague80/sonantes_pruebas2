@@ -3282,6 +3282,8 @@ emailjs.init('5ipJlMq5_y4xTIZjw');
       } catch(e){ localStorage.removeItem('sonantes_alumno_codigo'); }
     }
   }
+})();
+
 // ── PRE-INSCRIPCIONES ─────────────────────────────────────────
 var preinscripciones = [];
 var piFilterEstado   = 'todos';
@@ -3459,8 +3461,6 @@ function formatFechaPi(iso) {
   const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   return `${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
 }
-
-})();
 </script>
 </body>
 </html>
